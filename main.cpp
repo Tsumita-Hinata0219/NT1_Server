@@ -30,6 +30,33 @@ static unsigned short Get_PortNumber()
 	}
 }
 
+// ソケットを作成する関数
+static SOCKET CreateSocket() {
+	// ソケットの作成
+	SOCKET mySocket = socket(AF_INET, SOCK_STREAM, 0);
+	if (mySocket == INVALID_SOCKET) {
+		printf("ソケット作成に失敗しました。エラーコード: %d\n", WSAGetLastError());
+		return INVALID_SOCKET;
+	}
+	return mySocket;
+}
+
+// ソケットに名前を付けて接続
+static bool BindAndConnectSocket(SOCKET sockfd, unsigned short portNumber) {
+	sockaddr_in server_addr{};
+	memset(&server_addr, 0, sizeof(SOCKADDR_IN));
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_port = htons(portNumber);
+	server_addr.sin_addr.s_addr = INADDR_ANY;
+
+	// sockaddr_inをsockaddrにキャストしてconnect関数に渡す
+	if (connect(sockfd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
+		printf("接続に失敗しました\n");
+		return false;
+	}
+	return true;
+}
+
 
 
 int main()
@@ -48,11 +75,21 @@ int main()
 	unsigned short portNumber = Get_PortNumber();
 
 	/* ソケット作成 */
-	SOCKET mySocket = socket(AF_INET, SOCK_STREAM, 0);
+	SOCKET sockfd = CreateSocket();
 
-	/* ソケットに名前を付ける */
-	//mySocket = bind(mySocket, )
+	/* ソケットに名前を付けて接続 */
+	if (!BindAndConnectSocket(sockfd, portNumber)) {
+		closesocket(sockfd);
+		WSACleanup();
+		return FALSE;
+	}
 
+
+
+
+
+	/* ソケットを閉じる */
+	closesocket(sockfd);
 
 	/* WinSock終了 */
 	WSACleanup();
