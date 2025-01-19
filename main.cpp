@@ -1,10 +1,12 @@
 #define _WINDOCK_DEPRECATED_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <WinSock2.h>
+#include <WS2tcpip.h>
 #include <stdio.h>
 
 #pragma comment(lib, "WSock32.lib")
-
+#pragma comment(lib, "Ws2_32.lib")
 
 
 // ポート番号を設定する
@@ -39,7 +41,7 @@ static SOCKET CreateSocket()
 		printf("ソケット作成に失敗しました。エラーコード: %d\n", WSAGetLastError());
 		return INVALID_SOCKET;
 	}
-	printf("ソケット作成に成功\n");
+	printf("socket 成功\n");
 	return mySocket;
 }
 
@@ -60,7 +62,7 @@ static bool BindSocket(SOCKET sockfd, const sockaddr_in& server_addr)
 		printf("バインドに失敗しました。エラーコード: %d\n", WSAGetLastError());
 		return false;
 	}
-	printf("bind成功\n");
+	printf("bind 成功\n");
 	return true;
 }
 
@@ -71,7 +73,7 @@ static bool ListenSocket(SOCKET sockfd)
 		printf("リッスンに失敗しました。エラーコード: %d\n", WSAGetLastError());
 		return false;
 	}
-	printf("listen成功\n");
+	printf("listen 成功\n");
 	return true;
 }
 
@@ -107,7 +109,9 @@ static SOCKET AcceptClientConnection(SOCKET listenSock)
 		printf("クライアントの接続受け入れに失敗しました。エラーコード: %d\n", WSAGetLastError());
 		return INVALID_SOCKET;
 	}
-	printf("クライアント %s が接続してきました\n", inet_ntoa(client_addr.sin_addr));
+	char client_ip[INET_ADDRSTRLEN];
+	inet_ntop(AF_INET, &client_addr.sin_addr, client_ip, INET_ADDRSTRLEN);
+	printf("クライアント %s が接続してきました\n", client_ip);
 	printf("accepet関数成功\n");
 	return clientSock;
 }
