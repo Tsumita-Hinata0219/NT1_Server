@@ -1,4 +1,4 @@
-#define _WINDOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <WinSock2.h>
@@ -41,7 +41,7 @@ static SOCKET CreateSocket()
 		printf("ソケット作成に失敗しました。エラーコード: %d\n", WSAGetLastError());
 		return INVALID_SOCKET;
 	}
-	printf("socket 成功\n");
+	printf("socket作成 成功\n");
 	return mySocket;
 }
 
